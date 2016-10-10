@@ -1,0 +1,9 @@
+<!--
+	<h3>PDF</h3><object type="application/pdf" data="#{statisticsBean.pdfDocument" height="300px" width="100%">
+	Your browser can't display pdf, <a href="/resources/demo/media/guide.pdf">click</a> to download pdf instead.
+</object>
+	-->
+
+		<p:tab title="StreamedContent">
+    		<pe:documentViewer height="500" value="#{statisticsBean.pdfDocument}"/>
+    	</p:tab>
