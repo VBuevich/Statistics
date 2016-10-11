@@ -11,28 +11,39 @@ import java.util.ArrayList;
 
 import static raiload.statistics.StatisticsEJB.getStatistics;
 
+/**
+ * JSF Bean
+ * for "statistics.xhtml" page
+ *
+ * @author vbuevich
+ */
 @ManagedBean
 @SessionScoped
 public class StatisticsBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	private Date startTime;
-    private Date endTime;
-	private StreamedContent pdfDocument;
+	private Date startTime; // start period of statistics
+    private Date endTime; // end period of statistics
+	private StreamedContent pdfDocument; // streamed content of PDF document which will be generated from statistics received from REST service
 
+	/**
+	 * Method to handle button click event when user wants to get statistics
+	 *
+	 * @return refreshes "statistics.xhtml" page
+	 */
     public String statistics() {
-        // Getting statistics here
-		Long sT = this.getStartTime().getTime();
-		String startTime = sT.toString();
-		Long eT = this.getEndTime().getTime();
-		String endTime = eT.toString();
-		ArrayList<Statistics> statisticsList = getStatistics(startTime, endTime);
 
-		StreamedContent document = PdfStatisticsView.buildPdfDocument(statisticsList);
-		this.setPdfDocument(document);
+		Long sT = this.getStartTime().getTime(); // milliseconds from startTime
+		String startTime = sT.toString(); // the String of milliseconds so we can pass them as parameter to REST service
+		Long eT = this.getEndTime().getTime(); // milliseconds from endTime
+		String endTime = eT.toString(); // the String of milliseconds so we can pass them as parameter to REST service
+		ArrayList<Statistics> statisticsList = getStatistics(startTime, endTime); // getting List of Statistics from REST service via EJB
 
-        return "index";
+		StreamedContent document = PdfStatisticsView.buildPdfDocument(statisticsList); // creating PDF
+		this.setPdfDocument(document); // setting PDF as field in bean
+
+        return "statistics"; // reloading page to get updated PDF view
     }
 
 	public Date getStartTime() {

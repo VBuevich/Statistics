@@ -8,6 +8,7 @@ import java.sql.Timestamp;
  * @author vbuevich
  *
  * received entity class - statistics
+ * used as DTO - Data Transfer Object
  */
 public class Statistics {
     private int statisticsId;

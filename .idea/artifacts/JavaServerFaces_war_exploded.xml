@@ -42,6 +42,8 @@
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.6.3" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.6.0" />
           <element id="library" level="project" name="Maven: com.fasterxml.jackson.core:jackson-core:2.6.3" />
+          <element id="library" level="project" name="Maven: org.jboss.logging:jboss-logging:3.3.0.Final" />
+          <element id="library" level="project" name="Maven: net.bytebuddy:byte-buddy:1.4.31" />
         </element>
       </element>
       <element id="directory" name="META-INF">

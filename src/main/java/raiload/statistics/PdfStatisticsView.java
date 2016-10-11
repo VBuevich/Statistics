@@ -5,16 +5,29 @@ import com.lowagie.text.Document;
 import com.lowagie.text.Paragraph;
 import com.lowagie.text.Table;
 import com.lowagie.text.pdf.PdfWriter;
+import org.jboss.logging.Logger;
 import org.primefaces.model.DefaultStreamedContent;
 import org.primefaces.model.StreamedContent;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 
+/**
+ * Class used to generate PDF for view
+ *
+ * @author vbuevich
+ */
 public class PdfStatisticsView {
 
+    private static final Logger LOGGER = Logger.getLogger(PdfStatisticsView.class);
+
+    /**
+     * Method for dynamic generation of streamed content - PDF
+     *
+     * @param statistics list of statistics entities
+     * @return
+     */
     public static StreamedContent buildPdfDocument(ArrayList<Statistics> statistics) {
 
         Document document = new Document();
@@ -23,7 +36,6 @@ public class PdfStatisticsView {
         document.open();
 
         try {
-
             ByteArrayOutputStream out = new ByteArrayOutputStream();
 
             PdfWriter.getInstance(document, out);
@@ -82,7 +94,7 @@ public class PdfStatisticsView {
             document.close();
             sc = new DefaultStreamedContent(new ByteArrayInputStream(out.toByteArray()), "application/pdf");
         } catch (Exception e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage());
         }
 
         return sc;
