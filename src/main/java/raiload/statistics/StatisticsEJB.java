@@ -37,7 +37,7 @@ public class StatisticsEJB {
       public static ArrayList<Statistics> getStatistics(String startTime, String endTime) {
 
             Client client = Client.create(); // REST client
-            WebResource webResource = client.resource("http://localhost:8080/JPA-Hibernate-1.0-SNAPSHOT/statistics"); // our our Spring REST service
+            WebResource webResource = client.resource("http://localhost:8080/railroad/statistics"); // our our Spring REST service
             ObjectMapper mapper = new ObjectMapper(); // for JSon
 
             MultivaluedMap<String, String> params = new MultivaluedMapImpl(); // parameters

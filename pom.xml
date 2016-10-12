@@ -115,7 +115,7 @@
 	</dependencies>
 
 	<build>
-		<finalName>JavaServerFaces</finalName>
+		<finalName>statistics</finalName>
 
 		<plugins>
 			<plugin>
