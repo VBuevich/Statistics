@@ -61,19 +61,30 @@ public class PdfStatisticsView {
 
 
         // GENERATING STATISTICS DATA
-        Map.Entry<String, Integer> bestCustomerMap = getBestCustomer(statistics); // most frequent traveler`s email
-        String bestCustomerEmail = bestCustomerMap.getKey();
-        String bestCustomer = "";
-        for (Statistics s : statistics) { // looking for his name and surname
-            if (s.getPassengerEmail().equals(bestCustomerEmail)) {
-                bestCustomer = s.getPassengerName() + " " + s.getPassengerSurname(); // building name + surname string
-            }
+        ArrayList<String> emailList = new ArrayList<String>();
+        ArrayList<String> trainList = new ArrayList<String>();
+        ArrayList<String> departureList = new ArrayList<String>();
+        ArrayList<String> arrivalList = new ArrayList<String>();
+
+        for (Statistics s : statistics) {
+            emailList.add(s.getPassengerEmail());
+            trainList.add(Integer.toString(s.getTrainNumber()));
+            departureList.add(s.getDepartureStation());
+            arrivalList.add(s.getArrivalStation());
         }
 
-        Map.Entry<Integer, Integer> bestTrain = getBestTrain(statistics); // most frequent traveler
-        Map.Entry<String, Integer> bestDeparture = getBestDeparture(statistics); // most frequent traveler
-        Map.Entry<String, Integer> bestArrival = getBestArrival(statistics); // most frequent traveler
+        Map.Entry<String, Integer> bestCustomerMap = findMostFrequent(emailList); // most frequent traveler
+        Map.Entry<String, Integer> bestTrain = findMostFrequent(trainList); // most occupied train
+        Map.Entry<String, Integer> bestDeparture = findMostFrequent(departureList); // most wanted departure station
+        Map.Entry<String, Integer> bestArrival = findMostFrequent(arrivalList); // most wanted arrival station
 
+        String bestCustomerEmail = bestCustomerMap.getKey();
+        String bestCustomer = "";
+        for (Statistics s : statistics) {
+            if (s.getPassengerEmail().equals(bestCustomerEmail)) {
+                bestCustomer = s.getPassengerName() + " " + s.getPassengerSurname();
+            }
+        }
         // GENERATING STATISTICS PDF
         try {
             ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -98,7 +109,7 @@ public class PdfStatisticsView {
             statisticsTable.addCell(bestCustomerMap.getValue().toString());
             // Best train
             statisticsTable.addCell("Most occupied train");
-            statisticsTable.addCell(bestTrain.getKey().toString());
+            statisticsTable.addCell(bestTrain.getKey());
             statisticsTable.addCell(bestTrain.getValue().toString());
             // Best departure
             statisticsTable.addCell("Most wanted Departure");
@@ -173,127 +184,34 @@ public class PdfStatisticsView {
     }
 
     /**
-     * Method to get most frequent traveler from statistics
+     * Method to get most frequent string in collection and the number of its occurrences
      *
-     * @param statistics received statistics
-     * @return pair of passengers` email and the number of tickets he has bought
+     * @param list collection of statistics`s items
+     * @return pair of most frequent string and the number of its occurrences
      */
-    private static Map.Entry<String, Integer> getBestCustomer(ArrayList<Statistics> statistics) {
+    private static Map.Entry<String, Integer> findMostFrequent(ArrayList<String> list) {
 
         Map<String, Integer> rating = new TreeMap<String, Integer>();
-        for (Statistics s : statistics) {
-            String email = s.getPassengerEmail();
-            if (rating.containsKey(email)) { // if we have already counted this passenger - lets increment his counter
-                rating.put(email, (rating.get(email) +1));
+        for (String s : list) {
+
+            if (rating.containsKey(s)) { // if we have already counted this string - lets increment his counter
+                rating.put(s, (rating.get(s) +1));
             }
             else {
-                rating.put(email, 1); // new entry, this passenger has just 1 ticket at the moment
+                rating.put(s, 1); // new entry, this string has just 1 ticket at the moment
             }
         }
 
         Map.Entry<String, Integer> maxEntry = null;
 
-        for (Map.Entry<String, Integer> entry : rating.entrySet()) // looking for most frequent traveler
+        for (Map.Entry<String, Integer> entry : rating.entrySet()) // looking for most frequent string
         {
             if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
             {
                 maxEntry = entry;
             }
         }
-        return maxEntry; // pair of most frequent travellers` email and the number of times he has bought tickets
-    }
-
-    /**
-     * Method to get most occupied train from statistics
-     *
-     * @param statistics received statistics
-     * @return pair of train number and the number of sold places on it
-     */
-    private static Map.Entry<Integer, Integer> getBestTrain(ArrayList<Statistics> statistics) {
-
-        Map<Integer, Integer> rating = new TreeMap<Integer, Integer>();
-        for (Statistics s : statistics) {
-            Integer trainNumber = s.getTrainNumber();
-            if (rating.containsKey(trainNumber)) { // if we have already counted this train - lets increment his counter
-                rating.put(trainNumber, (rating.get(trainNumber) +1));
-            }
-            else { // new entry, this train has just one passenger
-                rating.put(trainNumber, 1);
-            }
-        }
-
-        Map.Entry<Integer, Integer> maxEntry = null;
-
-        for (Map.Entry<Integer, Integer> entry : rating.entrySet()) // looking for most occupied train
-        {
-            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
-            {
-                maxEntry = entry;
-            }
-        }
-        return maxEntry; // pair of train number and the number of sold places on it
-    }
-
-    /**
-     * Method to get most wanted station of departure from statistics
-     *
-     * @param statistics received statistics
-     * @return pair of station name and the number of departing passengers from it
-     */
-    private static Map.Entry<String, Integer> getBestDeparture(ArrayList<Statistics> statistics) {
-
-        Map<String, Integer> rating = new TreeMap<String, Integer>();
-        for (Statistics s : statistics) {
-            String departureStation = s.getDepartureStation();
-            if (rating.containsKey(departureStation)) { // if we have already counted this station - lets increment his counter
-                rating.put(departureStation, (rating.get(departureStation) +1));
-            }
-            else { // new entry, this station has just one passenger
-                rating.put(departureStation, 1);
-            }
-        }
-
-        Map.Entry<String, Integer> maxEntry = null;
-
-        for (Map.Entry<String, Integer> entry : rating.entrySet()) // looking for most occupied station
-        {
-            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
-            {
-                maxEntry = entry;
-            }
-        }
-        return maxEntry; // pair of station name and the number of departing passengers from it
-    }
-
-    /**
-     * Method to get most wanted station of arrival from statistics
-     *
-     * @param statistics received statistics
-     * @return pair of station name and the number of arriving passengers on it
-     */
-    private static Map.Entry<String, Integer> getBestArrival(ArrayList<Statistics> statistics) {
-
-        Map<String, Integer> rating = new TreeMap<String, Integer>();
-        for (Statistics s : statistics) {
-            String arrivalStation = s.getArrivalStation();
-            if (rating.containsKey(arrivalStation)) { // if we have already counted this station - lets increment his counter
-                rating.put(arrivalStation, (rating.get(arrivalStation) +1));
-            }
-            else { // new entry, this station has just one passenger
-                rating.put(arrivalStation, 1);
-            }
-        }
-
-        Map.Entry<String, Integer> maxEntry = null;
-
-        for (Map.Entry<String, Integer> entry : rating.entrySet()) // looking for most occupied station
-        {
-            if (maxEntry == null || entry.getValue().compareTo(maxEntry.getValue()) > 0)
-            {
-                maxEntry = entry;
-            }
-        }
-        return maxEntry; // pair of station name and the number of arriving passengers on it
+        return maxEntry; // pair of most frequent string and the number of times we met it
     }
 
 }
